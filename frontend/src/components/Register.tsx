@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,6 +11,8 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const { email, name, password, confirmPassword } = formData;
 
@@ -21,15 +24,29 @@ const Register = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    if (password !== confirmPassword) {
+        setErrorMessage('Passwords do not match');
+        return;
+    }
+    try {
+        await api.post('/user', formData)
+        navigate('/')
+    } catch (error) {
+        setErrorMessage('Oops something wrong!');
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-semibold text-center mb-4">Register</h2>
+        {errorMessage && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
