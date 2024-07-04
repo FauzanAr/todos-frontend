@@ -12,6 +12,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [token, setToken_] = useState<string | null>(localStorage.getItem("accessToken"));
 
   const setToken = (newToken: string | null) => {
+    console.log('token: ', newToken)
     setToken_(newToken);
   };
 

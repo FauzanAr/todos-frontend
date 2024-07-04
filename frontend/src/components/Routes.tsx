@@ -1,60 +1,34 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { ProtectedRoute } from "./ProtectedRoute";
-import Login from "./Login";
-import Register from "./Register";
-import Dashboard from "./Dashboard";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {ProtectedRoute} from './ProtectedRoute';
 
-const Routes = () => {
-  const { token } = useAuth()
+import Login from './Login';
+import Register from './Register';
+import Dashboard from '../layout/Dashboard';
+import Todo from './Todo';
 
-  type AppRoute = {
-    path: string;
-    element: JSX.Element;
-    children?: AppRoute[];
-  };
+const RoutesApp = () => {
+  const { token } = useAuth();
 
-  const routesForPublic: AppRoute[] = [
-    {
-      path: "/",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-  ];
-
-  const routesForAuthenticatedOnly: AppRoute[] = [
-    {
-      path: "/",
-      element: <ProtectedRoute />,
-      children: [
-        {
-          path: "/dashboard",
-          element: <Dashboard />,
-        }
-      ],
-    },
-  ];
-
-  const routesForNotAuthenticatedOnly: AppRoute[] = [
-    {
-      path: "/",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-  ];
-
-  const router = createBrowserRouter([
-    ...routesForPublic,
-    ...(token ? routesForAuthenticatedOnly : routesForNotAuthenticatedOnly),
-  ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        {token ? (
+          <Route path="/dashboard" element={<ProtectedRoute />}>
+            <Route index element={
+                <Dashboard>
+                  <Todo />
+                </Dashboard>
+              } />
+          </Route>
+        ) : (
+          <Route path="/dashboard" element={<Login />} />
+        )}
+      </Routes>
+    </Router>
+  );
 };
 
-export default Routes;
+export default RoutesApp;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
+import Header from '../components/Header';
 
-const Dashboard = () => {
+const Dashboard = ({children}: {children: React.ReactNode}) => {
     const user = localStorage.getItem("user");
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -38,9 +39,11 @@ const Dashboard = () => {
     }
 
     return (
-        <div>
-            <h2>Dashboard</h2>
-            <p>Welcome, {userData?.name || 'Guest'}</p>
+        <div className="bg-gray-100 min-h-screen pt-16 sm:w-full mx-auto">
+            <Header />
+            <main className="p-4">
+                {children}
+            </main>
         </div>
     );
 };
